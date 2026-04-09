@@ -1,5 +1,5 @@
 CXX= g++
-CXXFLAGS= -std=c++11
+CXXFLAGS= -std=c++14
 
 INCLUDE= -I./include
 LIB= 
