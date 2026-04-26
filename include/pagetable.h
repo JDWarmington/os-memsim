@@ -6,26 +6,19 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 struct PageTableKeyComparator
 {
-    inline bool operator() (const std::string& str1, const std::string& str2)
-    {
-        size_t sep1 = str1.find("|");
-        uint32_t pid1 = std::stoi(str1.substr(0, sep1));
-        int page1 = std::stoi(str1.substr(sep1 + 1));
-        size_t sep2 = str2.find("|");
-        uint32_t pid2 = std::stoi(str2.substr(0, sep2));
-        int page2 = std::stoi(str2.substr(sep2 + 1));
-
-        return (pid1 < pid2 || (pid1 == pid2 && page1 < page2));
-    }
+    bool operator()(const std::string& str1, const std::string& str2) const;
 };
 
 class PageTable {
 private:
     int _page_size;
-    std::map<std::string, int> _table;
+    int _max_frames;
+    std::map<std::string, int, PageTableKeyComparator> _table;
+    std::set<int> _used_frames;
 
     std::vector<std::string> sortedKeys();
 
@@ -33,9 +26,20 @@ public:
     PageTable(int page_size);
     ~PageTable();
 
+    int getPageSize() const;
+    int getFrameCount() const;
+    int getUsedFrameCount() const;
+    int getFreeFrameCount() const;
+
     void addEntry(uint32_t pid, int page_number);
+    bool hasEntry(uint32_t pid, int page_number) const;
+    void removeEntry(uint32_t pid, int page_number);
+    void removeProcess(uint32_t pid);
+
     int getPhysicalAddress(uint32_t pid, uint32_t virtual_address);
     void print();
+
+    static void parseKey(const std::string& key, uint32_t& pid, int& page_number);
 };
 
 #endif // __PAGETABLE_H_

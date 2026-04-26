@@ -32,6 +32,15 @@ public:
     uint32_t createProcess();
     void addVariableToProcess(uint32_t pid, std::string var_name, DataType type, uint32_t size, uint32_t address);
     void print();
+
+    // Helper methods used by main.cpp for allocation, deallocation, and error checks.
+    bool processExists(uint32_t pid) const;
+    bool variableExists(uint32_t pid, const std::string& var_name) const;
+    Process* getProcess(uint32_t pid) const;
+    Variable* getVariable(uint32_t pid, const std::string& var_name) const;
+    void removeVariableFromProcess(uint32_t pid, const std::string& var_name);
+    void removeProcess(uint32_t pid);
+    std::vector<uint32_t> getPids() const;
 };
 
 #endif // __MMU_H_
